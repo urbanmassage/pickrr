@@ -9,7 +9,7 @@ function hasProp(prop: string, obj: Object): boolean {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-function _pick<T>(path: string, require: boolean, rules: T, ...objects: any[]): T {
+function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]): T {
   const output: T = <any>{};
 
   Object.keys(rules).forEach(key => {
@@ -19,8 +19,8 @@ function _pick<T>(path: string, require: boolean, rules: T, ...objects: any[]): 
     const truePath = (path ? path + '.' : '') + key;
 
     // Handle nested objects
-    if (typeof type === 'object') {
-      output[key] = _pick(truePath, require, type, objects.map(obj => obj && obj[key]).filter(obj => !!obj));
+    if (typeof type === 'object' && !Array.isArray(type)) {
+      output[key] = _pick(truePath, required, type, objects.map(obj => obj && obj[key]).filter(obj => !!obj));
     }
 
     const value: typeof type = objects.reduce((value, object) => {
@@ -30,7 +30,7 @@ function _pick<T>(path: string, require: boolean, rules: T, ...objects: any[]): 
 
     // Not found in any object.
     if (typeof value === 'undefined') {
-      if (require) {
+      if (required) {
         const err: any = new Error('Missing attribute "' + truePath + '"');
         err.attribute = truePath;
         throw err;
@@ -38,24 +38,39 @@ function _pick<T>(path: string, require: boolean, rules: T, ...objects: any[]): 
       return;
     }
 
-    switch (type) {
-    case string:
-      output[key] = value + '';
-      return;
-    case number:
-    case float:
-      output[key] = parseFloat(value);
-      return;
-    case integer:
-      output[key] = parseInt(value, 10);
-      return;
-    case boolean:
-      output[key] = !!value;
-      return;
-    case date:
-      output[key] = typeof value === 'Date' ? value : new Date(value);
+    // Handle arrays
+    if (Array.isArray(type)) {
+      if (type.length !== 1) {
+        console.warn('pickrr#pick can only accept Arrays with one value. You passed: ', type);
+      }
+
+      output[key] = value.map((val, index) => {
+        let newVal = _pick(truePath, required, {
+          [index]: type[0],
+        }, {
+          [index]: val,
+        });
+
+        return newVal ? newVal[index] : undefined;
+      });
       return;
     }
+
+    switch (type) {
+    case string:
+      return output[key] = value + '';
+    case number:
+    case float:
+      return output[key] = parseFloat(value);
+    case integer:
+      return output[key] = parseInt(value, 10);
+    case boolean:
+      return output[key] = !!value;
+    case date:
+      return output[key] = typeof value === 'Date' ? value : new Date(value);
+    }
+
+    // Unknown type.
   });
 
   return output;
