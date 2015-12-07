@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-const pickrr = require('../index');
+import pickrr = require('../src/index');
 
 describe('pickrr', () => {
   it('has expected properties', () => {
