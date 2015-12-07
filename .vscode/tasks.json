@@ -1,0 +1,23 @@
+{
+	"version": "0.1.0",
+	"command": "npm",
+	"isShellCommand": true,
+	"args": [
+		"-s",
+		"run"
+	],
+	"tasks": [
+		{
+			"taskName": "build",
+			"isBuildCommand": true,
+			"problemMatcher": "$tsc"
+		},
+		{
+			"taskName": "test",
+			"isTestCommand": true
+		},
+		{
+			"taskName": "coverage"
+		}
+	]
+}

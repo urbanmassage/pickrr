@@ -1,0 +1,8 @@
+{
+	"files.exclude": {
+		"src/**.js": true,
+		"test/**.js": true,
+		"**/*.js.map": true,
+		"index.js": true
+	}
+}
