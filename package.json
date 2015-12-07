@@ -1,0 +1,27 @@
+{
+  "name": "pickrr",
+  "version": "0.0.1",
+  "description": "Object picking done right.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "json",
+    "object",
+    "pick",
+    "data",
+    "security",
+    "typescript"
+  ],
+  "author": "Louay Alakkad <louay@alakkad.me>",
+  "license": "LGPL-3.0",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "istanbul": "^0.4.1",
+    "mocha": "^2.3.4",
+    "tsd": "^0.6.5",
+    "tslint": "^3.1.1",
+    "typescript": "^1.7.3"
+  }
+}
