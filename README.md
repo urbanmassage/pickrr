@@ -1,4 +1,8 @@
 # Pickrr
+[![CircleCI](https://img.shields.io/circleci/project/urbanmassage/pickrr.svg)](https://circleci.com/gh/urbanmassage/pickrr)
+[![npm](https://img.shields.io/npm/v/pickrr.svg)](http://npmjs.com/package/pickrr)
+[![Codecov](https://img.shields.io/codecov/c/github/urbanmassage/pickrr.svg)](https://codecov.io/github/urbanmassage/pickrr)
+
 Contracts in Typescript done right.
 
 ## Goal
