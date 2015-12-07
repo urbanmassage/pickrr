@@ -1,18 +1,7 @@
 import {expect} from 'chai';
-import pickrr = require('../src/index');
+import {pick, pickRqr, string, integer} from '../index';
 
 describe('pickrr', () => {
-  it('has expected properties', () => {
-    expect(pickrr).to.have.property('string').that.is.a('string');
-    expect(pickrr).to.have.property('number').that.is.a('number');
-    expect(pickrr).to.have.property('integer').that.is.a('number');
-    expect(pickrr).to.have.property('float').that.is.a('number');
-    expect(pickrr).to.have.property('date').that.is.a('date');
-
-    expect(pickrr).to.have.property('pick').that.is.a('function');
-    expect(pickrr).to.have.property('pickRqr').that.is.a('function');
-  });
-
   it('picks', () => {
     const obj = {
       name: 'Louay',
@@ -23,12 +12,12 @@ describe('pickrr', () => {
       name: 'Louay',
     };
 
-    expect(pickrr.pick({
-      name: pickrr.string,
+    expect(pick({
+      name: string,
     }, obj)).to.deep.equal(picked);
 
-    expect(pickrr.pickRqr({
-      name: pickrr.string,
+    expect(pickRqr({
+      name: string,
     }, obj)).to.deep.equal(picked);
   });
 
@@ -38,20 +27,16 @@ describe('pickrr', () => {
       email: 'louay@example.com',
     };
 
-    expect(() => pickrr.pickRqr({
-      name: pickrr.string,
-      age: pickrr.integer,
+    expect(() => pickRqr({
+      name: string,
+      age: integer,
     }, obj)).to.throw();
 
-    expect(() => pickrr.pick({
-      name: pickrr.string,
-      age: pickrr.integer,
+    expect(() => pick({
+      name: string,
+      age: integer,
     }, obj)).not.to.throw();
   });
-
-  it('respects string');
-  it('respects number');
-  it('respects date');
 
   it('accepts multiple objects');
 });
