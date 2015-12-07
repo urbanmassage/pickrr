@@ -25,6 +25,7 @@
     "istanbul": "^0.4.1",
     "map-coverage": "0.0.3",
     "mocha": "^2.3.4",
+    "mocha-junit-reporter": "^1.9.1",
     "tsd": "^0.6.5",
     "tslint": "^3.1.1",
     "typescript": "^1.7.3"

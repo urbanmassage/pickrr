@@ -4,3 +4,5 @@ node_modules/
 **/*.log
 
 .vscode/
+
+circle.yml
