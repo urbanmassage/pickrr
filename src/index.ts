@@ -29,13 +29,15 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     }, undefined);
 
     // Not found in any object.
-    if (typeof value === 'undefined') {
+    if (value == null) {
       if (required) {
         const err: any = new Error('Missing attribute "' + truePath + '"');
         err.attribute = truePath;
         throw err;
       }
-      return;
+      if (typeof value === 'undefined') {
+        return;
+      }
     }
 
     // Handle arrays
@@ -54,6 +56,11 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
         return newVal ? newVal[index] : undefined;
       });
       return;
+    }
+
+    // Keep null as is.
+    if (value == null) {
+      return output[key] = value;
     }
 
     switch (type) {

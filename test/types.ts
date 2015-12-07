@@ -162,4 +162,6 @@ describe('pickrr', () => {
       matrix: [[integer]],
     }, obj)).to.deep.equal(obj);
   });
+
+  it('respects nested objects');
 });
