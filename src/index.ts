@@ -19,8 +19,12 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     const truePath = (path ? path + '.' : '') + key;
 
     // Handle nested objects
-    if (typeof type === 'object' && !Array.isArray(type)) {
-      output[key] = _pick(truePath, required, type, objects.map(obj => obj && obj[key]).filter(obj => !!obj));
+    if (typeof type === 'object' &&
+      !Array.isArray(type) &&
+      !(type instanceof Date)
+    ) {
+      output[key] = _pick(truePath, required, type, ...objects.map(obj => obj && obj[key]).filter(obj => !!obj));
+      return;
     }
 
     const value: typeof type = objects.reduce((value, object) => {
@@ -78,6 +82,7 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     }
 
     // Unknown type.
+    console.warn('An unknown type was passed to pickrr', type);
   });
 
   return output;

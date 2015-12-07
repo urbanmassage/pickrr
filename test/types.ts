@@ -163,5 +163,17 @@ describe('pickrr', () => {
     }, obj)).to.deep.equal(obj);
   });
 
-  it('respects nested objects');
+  it('respects nested objects', () => {
+    const obj = {
+      params: {
+        id: '1',
+      },
+    };
+
+    expect(pick({
+      params: {id: integer},
+    }, obj)).to.deep.equal({
+      params: {id: 1},
+    });
+  });
 });
