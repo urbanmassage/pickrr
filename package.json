@@ -4,7 +4,10 @@
   "description": "Object picking done right.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "build": "tsc -p .",
+    "pretest": "npm run build",
+    "test": "mocha",
+    "coverage": "istanbul cover _mocha"
   },
   "keywords": [
     "json",
