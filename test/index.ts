@@ -26,6 +26,9 @@ describe('pickrr', () => {
       name: 'Louay',
       email: 'louay@example.com',
       notNull: null,
+      nested: {
+        value: 'something',
+      },
     };
 
     expect(() => pickRqr({
@@ -40,6 +43,15 @@ describe('pickrr', () => {
 
     expect(() => pickRqr({
       notNull: string,
+    }, obj)).to.throw();
+
+    expect(() => pickRqr({
+      nested: {value: string},
+    }, obj)).not.to.throw();
+
+    expect(() => pickRqr({
+      nested: {data: string},
+      nested2: {data: string},
     }, obj)).to.throw();
   });
 
