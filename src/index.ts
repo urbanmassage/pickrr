@@ -88,10 +88,25 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
   return output;
 };
 
+export function pick<T>(rules: T, ...objects: any[]): T;
 export function pick<T>(rules: T, ...objects: any[]): T {
   return _pick<T>('', false, rules, ...objects);
 }
 
 export function pickRqr<T>(rules: T, ...objects: any[]): T {
   return _pick<T>('', true, rules, ...objects);
+}
+
+/**
+ * Curried version of `#pick`
+ */
+export function pickr<T>(rules: T): (...objects: any[]) => T {
+  return (...objects: any[]) => pick(rules, ...objects);
+}
+
+/**
+ * Curried version of `#pickRqr`
+ */
+export function pickrRqr<T>(rules: T): (...objects: any[]) => T {
+  return (...objects: any[]) => pickRqr(rules, ...objects);
 }
