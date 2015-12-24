@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import {pick, string, boolean, number, integer, float, date, any} from '../index';
+import {BadRequestError} from 'hata';
 
 describe('pickrr', () => {
   it('respects string', () => {
@@ -100,23 +101,23 @@ describe('pickrr', () => {
 
     expect(() => pick({
       string: number,
-    }, obj)).to.throw;
+    }, obj)).to.throw(BadRequestError);
 
     expect(() => pick({
       time: number,
-    }, obj)).to.throw;
+    }, obj)).to.throw(BadRequestError);
 
     expect(() => pick({
       trueish: number,
-    }, obj)).to.throw;
+    }, obj)).to.throw(BadRequestError);
 
     expect(() => pick({
       falseish: number,
-    }, obj)).to.throw;
+    }, obj)).to.throw(BadRequestError);
 
     expect(() => pick({
       emptyString: number,
-    }, obj)).to.throw;
+    }, obj)).to.throw(BadRequestError);
   });
 
   it('respects date', () => {
@@ -148,11 +149,11 @@ describe('pickrr', () => {
 
     expect(() => pick({
       string: date,
-    }, obj)).to.throw;
+    }, obj)).to.throw(BadRequestError);
 
     expect(() => pick({
       emptyString: date,
-    }, obj)).to.throw;
+    }, obj)).to.throw(BadRequestError);
   });
 
   it('respects arrays', () => {

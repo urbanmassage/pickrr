@@ -27,6 +27,7 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
   objects = objects.filter(obj => !!obj);
 
   Object.keys(rules).forEach(key => {
+    /* istanbul ignore next */
     if (!hasProp(key, rules)) return;
 
     const type = rules[key];
