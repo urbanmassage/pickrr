@@ -118,6 +118,14 @@ describe('pickrr', () => {
     expect(() => pick({
       emptyString: number,
     }, obj)).to.throw(BadRequestError);
+
+    expect(() => pick({
+      emptyString: integer,
+    }, obj)).to.throw(BadRequestError);
+
+    expect(() => pick({
+      emptyString: float,
+    }, obj)).to.throw(BadRequestError);
   });
 
   it('respects date', () => {

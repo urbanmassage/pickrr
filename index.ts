@@ -63,6 +63,7 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
 
     // Handle arrays
     if (Array.isArray(type)) {
+      /* istanbul ignore next */
       if (type.length !== 1) {
         console.warn('pickrr#pick can only accept Arrays with one value. You passed: ', type);
       }
@@ -119,6 +120,7 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     }
 
     // Unknown type.
+    /* istanbul ignore next */
     console.warn('An unknown type was passed to pickrr', type);
   });
 
