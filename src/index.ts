@@ -1,8 +1,17 @@
+import * as hata from 'hata';
+
+/** A string */
 export const string: string = '';
+
+/** A number (float or int) */
 export const number: number = 0;
+
 export const integer: number = 1;
 export const float: number = 2;
+
+/** A boolean (true/false) */
 export const boolean: boolean = true;
+
 export const date: Date = new Date();
 
 function hasProp(prop: string, obj: Object): boolean {
@@ -11,6 +20,8 @@ function hasProp(prop: string, obj: Object): boolean {
 
 function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]): T {
   const output: T = <any>{};
+
+  objects = objects.filter(obj => !!obj);
 
   Object.keys(rules).forEach(key => {
     if (!hasProp(key, rules)) return;
@@ -28,18 +39,20 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     }
 
     const value: typeof type = objects.reduce((value, object) => {
-      if (typeof value !== 'undefined') return value;
-      return object ? object[key] : undefined;
+      if (value != null) return value;
+      // keep previous null value if exists
+      return object[key] === undefined ? value : object[key];
     }, undefined);
 
     // Not found in any object.
     if (value == null) {
       if (required) {
-        const err: any = new Error('Missing attribute "' + truePath + '"');
-        err.attribute = truePath;
-        throw err;
+        throw hata(400, 'Missing attribute "' + truePath + '"', {
+          attribute: truePath,
+        });
       }
       if (typeof value === 'undefined') {
+        // skip undefined values
         return;
       }
     }

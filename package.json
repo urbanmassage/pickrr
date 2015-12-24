@@ -20,7 +20,9 @@
   ],
   "author": "Louay Alakkad <louay@alakkad.me>",
   "license": "LGPL-3.0",
-  "dependencies": {},
+  "dependencies": {
+    "hata": "^0.3.2"
+  },
   "devDependencies": {
     "chai": "^3.4.1",
     "codecov.io": "^0.1.6",
