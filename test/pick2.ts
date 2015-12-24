@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {pick2, string, number} from '../index';
+import {pick2, pick2r, string, number} from '../index';
 
 describe('pickrr#pick2', () => {
   it('works', () => {
@@ -8,6 +8,20 @@ describe('pickrr#pick2', () => {
     }, {
       opt: number,
     }, {
+      req: 'a',
+      opt: 1,
+    })).to.deep.equal({
+      req: 'a',
+      opt: 1,
+    });
+  });
+
+  it('works curried', () => {
+    expect(pick2r({
+      req: string,
+    }, {
+      opt: number,
+    })({
       req: 'a',
       opt: 1,
     })).to.deep.equal({
