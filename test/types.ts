@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {pick, string, boolean, number, integer, float, date} from '../index';
+import {pick, string, boolean, number, integer, float, date, any} from '../index';
 
 describe('pickrr', () => {
   it('respects string', () => {
@@ -178,14 +178,34 @@ describe('pickrr', () => {
   it('respects nested objects', () => {
     const obj = {
       params: {
-        id: '1',
+        ids: ['1'],
       },
     };
 
     expect(pick({
-      params: {id: integer},
+      params: {ids: [integer]},
     }, obj)).to.deep.equal({
-      params: {id: 1},
+      params: {ids: [1]},
     });
+  });
+
+  it('respects any type', () => {
+    const obj = {
+      object: {
+        id: '1',
+      },
+      number: 123,
+      string: 'asd',
+      array: [string],
+      boolean: false,
+    };
+
+    expect(pick({
+      object: any,
+      number: any,
+      string: any,
+      array: any,
+      boolean: any,
+    }, obj)).to.deep.equal(obj); // no change
   });
 });
