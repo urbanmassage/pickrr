@@ -146,7 +146,7 @@ export function pickRqr<T>(rules: T, ...objects: any[]): T {
 
 /**
  * Curried version of `#pick`
- * @see pick
+ * @see pick()
  */
 export function pickr<T>(rules: T): (...objects: any[]) => T {
   return (...objects: any[]) => pick(rules, ...objects);
@@ -154,8 +154,39 @@ export function pickr<T>(rules: T): (...objects: any[]) => T {
 
 /**
  * Curried version of `#pickRqr`
- * @see pickRqr
+ * @see pickRqr()
  */
 export function pickrRqr<T>(rules: T): (...objects: any[]) => T {
   return (...objects: any[]) => pickRqr(rules, ...objects);
+}
+
+/**
+ * Pick with two set of rules. One for required values and one for the optional ones.
+ *
+ * Note: Merge is not recursive yet.
+ *
+ * @see pick()
+ * @see pickRqr()
+ */
+export function pick2<T>(rulesRqr: T, rulesOpt: Object, ...objects: any[]): T;
+export function pick2<T1, T2>(rulesRqr: T1, rulesOpt: T2, ...objects: any[]): T1 & T2;
+export function pick2<T1, T2>(rulesRqr: T1, rulesOpt: T2, ...objects: any[]): T1 & T2 {
+  let obj = pickRqr(rulesRqr, ...objects);
+
+  return Object.keys(rulesOpt).reduce((obj, key) => {
+    if (!hasProp(key, obj)) {
+      obj[key] = _pick('', false, {value: rulesOpt[key]}, ...objects).value;
+    }
+    return obj;
+  }, <T1 & T2> obj);
+}
+
+/**
+ * Curried version of `#pick2`
+ * @see pick2()
+ */
+export function pick2r<T>(rulesRqr: T, rulesOpt: Object): (...objects: any[]) => T;
+export function pick2r<T1, T2>(rulesRqr: T1, rulesOpt: T2): (...objects: any[]) => T1 & T2;
+export function pick2r<T1, T2>(rulesRqr: T1, rulesOpt: T2): (...objects: any[]) => T1 & T2 {
+  return (...objects: any[]) => pick2<T1, T2>(rulesRqr, rulesOpt, ...objects);
 }
