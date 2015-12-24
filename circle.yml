@@ -17,4 +17,4 @@ test:
   override:
     - npm test
     - MOCHA_FILE=$CIRCLE_TEST_REPORTS/test-results.xml npm run coverage -- -- "--reporter" "mocha-junit-reporter"
-#    - if [ -f ./coverage/lcov-mapped.info ]; then cat ./coverage/lcov-mapped.info | ./node_modules/codecov.io/bin/codecov.io.js; fi
+    - if [ -f ./coverage/lcov.info ]; then cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js; fi
