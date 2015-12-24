@@ -8,7 +8,9 @@
     "pretest": "npm run build",
     "test": "mocha",
     "coverage": "istanbul cover _mocha",
-    "postcoverage": "if [ -f coverage/lcov.info ]; then node node_modules/.bin/map-coverage; fi"
+    "postcoverage": "if [ -f coverage/lcov.info ]; then node node_modules/.bin/map-coverage; fi",
+    "preversion": "npm run build",
+    "postversion": "git push --follow-tags"
   },
   "keywords": [
     "json",
