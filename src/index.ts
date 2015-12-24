@@ -175,7 +175,8 @@ export function pick2<T1, T2>(rulesRqr: T1, rulesOpt: T2, ...objects: any[]): T1
 
   return Object.keys(rulesOpt).reduce((obj, key) => {
     if (!hasProp(key, obj)) {
-      obj[key] = _pick('', false, {value: rulesOpt[key]}, ...objects).value;
+      let val = _pick('', false, {[key]: rulesOpt[key]}, ...objects)[key];
+      if (val !== undefined) obj[key] = val;
     }
     return obj;
   }, <T1 & T2> obj);
