@@ -67,8 +67,8 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
         let newVal = _pick(truePath, required, {
           [index]: type[0],
         }, {
-          [index]: val,
-        });
+            [index]: val,
+          });
 
         return newVal ? newVal[index] : undefined;
       });
@@ -81,17 +81,35 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     }
 
     switch (type) {
-    case string:
-      return output[key] = value + '';
-    case number:
-    case float:
-      return output[key] = parseFloat(value);
-    case integer:
-      return output[key] = parseInt(value, 10);
-    case boolean:
-      return output[key] = !!value;
-    case date:
-      return output[key] = typeof value === 'Date' ? value : new Date(value);
+      case string:
+        return output[key] = value + '';
+      case number:
+      case float:
+        const vFloat = parseFloat(value);
+        if (isNaN(vFloat)) {
+          throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
+            attribute: truePath,
+          });
+        }
+        return output[key] = vFloat;
+      case integer:
+        const vInt = parseInt(value, 10);
+        if (isNaN(vInt)) {
+          throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
+            attribute: truePath,
+          });
+        }
+        return output[key] = vInt;
+      case boolean:
+        return output[key] = !!value;
+      case date:
+        const vDate = typeof value === 'Date' ? value : new Date(value);
+        if (isNaN(vDate)) {
+          throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
+            attribute: truePath,
+          });
+        }
+        return output[key] = vDate;
     }
 
     // Unknown type.
@@ -101,17 +119,34 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
   return output;
 };
 
+/**
+ * Pick attributes.
+ *
+ * Null/undefined attributes are left intact.
+ * You can pass multiple objects and only the first non-null value
+ *   for each attribute will be considered.
+ */
 export function pick<T>(rules: T, ...objects: any[]): T;
 export function pick<T>(rules: T, ...objects: any[]): T {
   return _pick<T>('', false, rules, ...objects);
 }
 
+/**
+ * Pick required attributes.
+ *
+ * Will throw hata 400 only in case one of the attributes is null or undefined.
+ * Doesn't check for emptiness/falseness.
+ *
+ * You can pass multiple objects and only the first non-null value
+ *   for each attribute will be considered.
+ */
 export function pickRqr<T>(rules: T, ...objects: any[]): T {
   return _pick<T>('', true, rules, ...objects);
 }
 
 /**
  * Curried version of `#pick`
+ * @see pick
  */
 export function pickr<T>(rules: T): (...objects: any[]) => T {
   return (...objects: any[]) => pick(rules, ...objects);
@@ -119,6 +154,7 @@ export function pickr<T>(rules: T): (...objects: any[]) => T {
 
 /**
  * Curried version of `#pickRqr`
+ * @see pickRqr
  */
 export function pickrRqr<T>(rules: T): (...objects: any[]) => T {
   return (...objects: any[]) => pickRqr(rules, ...objects);
