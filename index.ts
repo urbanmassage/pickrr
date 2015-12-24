@@ -14,6 +14,9 @@ export const boolean: boolean = true;
 
 export const date: Date = new Date();
 
+/** Anything (just like in TypeScript) */
+export const any: any = 'ANY';
+
 function hasProp(prop: string, obj: Object): boolean {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
@@ -81,6 +84,8 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     }
 
     switch (type) {
+      case any:
+        return output[key] = value;
       case string:
         return output[key] = value + '';
       case number:
