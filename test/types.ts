@@ -81,12 +81,6 @@ describe('pickrr', () => {
     };
 
     expect(pick({
-      string: number,
-      emptyString: number,
-      time: number,
-      trueish: number,
-      falseish: number,
-
       integer: number,
       float: number,
 
@@ -95,12 +89,6 @@ describe('pickrr', () => {
       floatFloat: float,
       integerFloat: float,
     }, obj)).to.deep.equal({
-      string: NaN,
-      emptyString: NaN,
-      time: NaN,
-      trueish: NaN,
-      falseish: NaN,
-
       integer: 0,
       float: 25.5,
 
@@ -109,6 +97,26 @@ describe('pickrr', () => {
       floatFloat: 5.5,
       integerFloat: 3,
     });
+
+    expect(() => pick({
+      string: number,
+    }, obj)).to.throw;
+
+    expect(() => pick({
+      time: number,
+    }, obj)).to.throw;
+
+    expect(() => pick({
+      trueish: number,
+    }, obj)).to.throw;
+
+    expect(() => pick({
+      falseish: number,
+    }, obj)).to.throw;
+
+    expect(() => pick({
+      emptyString: number,
+    }, obj)).to.throw;
   });
 
   it('respects date', () => {
@@ -125,22 +133,26 @@ describe('pickrr', () => {
     };
 
     expect(pick({
-      string: date,
-      emptyString: date,
       integer: date,
       float: date,
       time: date,
       trueish: date,
       falseish: date,
     }, obj)).to.deep.equal({
-      string: new Date('String'),
-      emptyString: new Date(''),
       integer: new Date(0),
       float: new Date(25.5),
       time,
       trueish: new Date(<any>true),
       falseish: new Date(<any>false),
     });
+
+    expect(() => pick({
+      string: date,
+    }, obj)).to.throw;
+
+    expect(() => pick({
+      emptyString: date,
+    }, obj)).to.throw;
   });
 
   it('respects arrays', () => {
