@@ -6,6 +6,7 @@
 		"-s",
 		"run"
 	],
+  "showOutput": "silent",
 	"tasks": [
 		{
 			"taskName": "build",
