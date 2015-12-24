@@ -60,20 +60,23 @@ describe('pickrr', () => {
       val1: string,
       val2: string,
       val4: string,
+      val5: string,
     }, {
       val1: 'test',
     }, {
       val2: 'test',
-      val4: null,
+      val4: null, // should be ignored
+      val5: null,
     }, {
       val1: 'test2', // should be ignored and first value should be used
       val3: 'test',
     }, {
-      val4: 'test', // should be ignored and first value should be used
+      val4: 'test',
     })).to.deep.equal({
       val1: 'test',
       val2: 'test',
-      val4: null,
+      val4: 'test',
+      val5: null,
     });
   });
 });

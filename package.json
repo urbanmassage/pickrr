@@ -9,7 +9,7 @@
     "test": "mocha",
     "coverage": "istanbul cover _mocha",
     "postcoverage": "if [ -f coverage/lcov.info ]; then node node_modules/.bin/map-coverage; fi",
-    "preversion": "npm run build",
+    "preversion": "npm run test",
     "postversion": "git push --follow-tags"
   },
   "keywords": [
