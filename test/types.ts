@@ -203,11 +203,20 @@ describe('pickrr', () => {
   it('respects arrays', () => {
     const obj = {
       names: ['Louay', 'Giles', 'Jack'],
+      nullable: [null, 'Louay'],
     };
 
     expect(pick({
       names: [string],
-    }, obj)).to.deep.equal(obj);
+    }, obj)).to.deep.equal({names: obj.names});
+
+    expect(pick({
+      nullable: [string],
+    }, obj)).to.deep.equal({nullable: obj.nullable});
+
+    expect(() => pickRqr({
+      nullable: [string],
+    }, obj)).to.throw(BadRequestError);
   });
 
   it('respects nested arrays', () => {
