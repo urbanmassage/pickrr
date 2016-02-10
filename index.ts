@@ -89,32 +89,44 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
       case any:
         return output[key] = value;
       case string:
-        return output[key] = value + '';
+        return output[key] = value != null ? value + '' : null;
       case number:
       case float:
-        const vFloat = parseFloat(value);
+        let vFloat = parseFloat(value);
         if (isNaN(vFloat)) {
-          throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
-            attribute: truePath,
-          });
+          if (required) {
+            throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
+              attribute: truePath,
+            });
+          } else {
+            vFloat = null;
+          }
         }
         return output[key] = vFloat;
       case integer:
-        const vInt = parseInt(value, 10);
+        let vInt = parseInt(value, 10);
         if (isNaN(vInt)) {
-          throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
-            attribute: truePath,
-          });
+          if (required) {
+            throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
+              attribute: truePath,
+            });
+          } else {
+            vInt = null;
+          }
         }
         return output[key] = vInt;
       case boolean:
         return output[key] = !!value;
       case date:
-        const vDate = typeof value === 'Date' ? value : new Date(value);
+        let vDate = typeof value === 'Date' ? value : new Date(value);
         if (isNaN(vDate)) {
-          throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
-            attribute: truePath,
-          });
+          if (required) {
+            throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
+              attribute: truePath,
+            });
+          } else {
+            vDate = null;
+          }
         }
         return output[key] = vDate;
     }

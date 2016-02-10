@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {pick, string, boolean, number, integer, float, date, any} from '../index';
+import {pick, pickRqr, string, boolean, number, integer, float, date, any} from '../index';
 import {BadRequestError} from 'hata';
 
 describe('pickrr', () => {
@@ -99,31 +99,59 @@ describe('pickrr', () => {
       integerFloat: 3,
     });
 
-    expect(() => pick({
+    expect(pick({
+      string: number,
+    }, obj)).to.deep.equal({string: null});
+
+    expect(() => pickRqr({
       string: number,
     }, obj)).to.throw(BadRequestError);
 
-    expect(() => pick({
+    expect(pick({
+      time: number,
+    }, obj)).to.deep.equal({time: null});
+
+    expect(() => pickRqr({
       time: number,
     }, obj)).to.throw(BadRequestError);
 
-    expect(() => pick({
+    expect(pick({
+      trueish: number,
+    }, obj)).to.deep.equal({trueish: null});
+
+    expect(() => pickRqr({
       trueish: number,
     }, obj)).to.throw(BadRequestError);
 
-    expect(() => pick({
+    expect(pick({
+      falseish: number,
+    }, obj)).to.deep.equal({falseish: null});
+
+    expect(() => pickRqr({
       falseish: number,
     }, obj)).to.throw(BadRequestError);
 
-    expect(() => pick({
+    expect(pick({
+      emptyString: number,
+    }, obj)).to.deep.equal({emptyString: null});
+
+    expect(() => pickRqr({
       emptyString: number,
     }, obj)).to.throw(BadRequestError);
 
-    expect(() => pick({
+    expect(pick({
+      emptyString: integer,
+    }, obj)).to.deep.equal({emptyString: null});
+
+    expect(() => pickRqr({
       emptyString: integer,
     }, obj)).to.throw(BadRequestError);
 
-    expect(() => pick({
+    expect(pick({
+      emptyString: float,
+    }, obj)).to.deep.equal({emptyString: null});
+
+    expect(() => pickRqr({
       emptyString: float,
     }, obj)).to.throw(BadRequestError);
   });
@@ -155,11 +183,19 @@ describe('pickrr', () => {
       falseish: new Date(<any>false),
     });
 
-    expect(() => pick({
+    expect(pick({
+      string: date,
+    }, obj)).to.deep.equal({string: null});
+
+    expect(() => pickRqr({
       string: date,
     }, obj)).to.throw(BadRequestError);
 
-    expect(() => pick({
+    expect(pick({
+      emptyString: date,
+    }, obj)).to.deep.equal({emptyString: null});
+
+    expect(() => pickRqr({
       emptyString: date,
     }, obj)).to.throw(BadRequestError);
   });
