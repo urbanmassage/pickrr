@@ -17,6 +17,16 @@ export const date: Date = new Date();
 /** Anything (just like in TypeScript) */
 export const any: any = 'ANY';
 
+export function oneOf<T1>(type1: T1): T1;
+export function oneOf<T1, T2>(type1: T1, type2: T2): T1 | T2;
+export function oneOf<T1, T2, T3>(type1: T1, type2: T2, type3: T3): T1 | T2 | T3;
+export function oneOf<T1, T2, T3, T4>(type1: T1, type2: T2, type3: T3, type4: T4): T1 | T2 | T3 | T4;
+export function oneOf<T1, T2, T3, T4, T5>(type1: T1, type2: T2, type3: T3, type4: T4, type5: T5): T1 | T2 | T3 | T4 | T5;
+export function oneOf(...types: any[]): any {
+  (types as any).__one_of = true;
+  return types;
+}
+
 function hasProp(prop: string, obj: Object): boolean {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
@@ -63,17 +73,48 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
 
     // Handle arrays
     if (Array.isArray(type)) {
+      if (type.__one_of) {
+        // handle oneOf
+        for (let possibleType of type) {
+          try {
+            let newVal = _pick(truePath, required,
+              {
+                oneOf: possibleType,
+              }, {
+                oneOf: value,
+              }
+            );
+            if (newVal.oneOf !== null) {
+              return output[key] = newVal.oneOf;
+            }
+          } catch (err) {
+            // catch errors and ignore them
+          }
+        }
+
+        // Didn't match any types
+        if (required) {
+          throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
+            attribute: truePath,
+          });
+        } else {
+          return null;
+        }
+      }
+
       /* istanbul ignore next */
       if (type.length !== 1) {
         console.warn('pickrr#pick can only accept Arrays with one value. You passed: ', type);
       }
 
       output[key] = value.map((val, index) => {
-        let newVal = _pick(truePath, required, {
-          [index]: type[0],
-        }, {
+        let newVal = _pick(truePath, required,
+          {
+            [index]: type[0],
+          }, {
             [index]: val,
-          });
+          }
+        );
 
         return newVal ? newVal[index] : undefined;
       });
@@ -89,32 +130,44 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
       case any:
         return output[key] = value;
       case string:
-        return output[key] = value + '';
+        return output[key] = value != null ? value + '' : null;
       case number:
       case float:
-        const vFloat = parseFloat(value);
+        let vFloat = parseFloat(value);
         if (isNaN(vFloat)) {
-          throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
-            attribute: truePath,
-          });
+          if (required) {
+            throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
+              attribute: truePath,
+            });
+          } else {
+            vFloat = null;
+          }
         }
         return output[key] = vFloat;
       case integer:
-        const vInt = parseInt(value, 10);
+        let vInt = parseInt(value, 10);
         if (isNaN(vInt)) {
-          throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
-            attribute: truePath,
-          });
+          if (required) {
+            throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
+              attribute: truePath,
+            });
+          } else {
+            vInt = null;
+          }
         }
         return output[key] = vInt;
       case boolean:
         return output[key] = !!value;
       case date:
-        const vDate = typeof value === 'Date' ? value : new Date(value);
+        let vDate = typeof value === 'Date' ? value : new Date(value);
         if (isNaN(vDate)) {
-          throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
-            attribute: truePath,
-          });
+          if (required) {
+            throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
+              attribute: truePath,
+            });
+          } else {
+            vDate = null;
+          }
         }
         return output[key] = vDate;
     }
