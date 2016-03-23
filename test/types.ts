@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {pick, string, boolean, number, integer, float, date, any} from '../index';
+import {pick, string, boolean, number, integer, float, date, any, oneOf} from '../index';
 import {BadRequestError} from 'hata';
 
 describe('pickrr', () => {
@@ -216,5 +216,26 @@ describe('pickrr', () => {
       array: any,
       boolean: any,
     }, obj)).to.deep.equal(obj); // no change
+  });
+
+  it('respects oneOf', () => {
+    const obj = {
+      object: {
+        id: '1',
+      },
+      number: 123,
+      number2: 123,
+      string: 'asd',
+      array: [string],
+      boolean: false,
+    };
+
+    expect(pick({
+      number: oneOf(string, date),
+      number2: oneOf(number, string),
+    }, obj)).to.deep.equal(pick({
+      number: string,
+      number2: number,
+    }, obj));
   });
 });
