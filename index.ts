@@ -22,10 +22,7 @@ function hasProp(prop: string, obj: Object): boolean {
 }
 
 function isPlainObject(object: any): object is Object {
-  return object &&
-        typeof object === 'object' &&
-        !(object instanceof Date) &&
-        !Array.isArray(object);
+  return Object.prototype.toString.call(object) === '[object Object]';
 }
 
 function deepObjectAssign<T1, T2>(t1: T1, t2: T2): T1 & T2;
