@@ -15,6 +15,28 @@ describe('pickrr#pick2', () => {
       opt: 1,
     });
   });
+  
+  it('works with nested objects', () => {
+    expect(pick2({
+      options: {
+        prop1: string,
+      },
+    }, {
+      options: {
+        prop2: string,
+      },
+    }, {
+      options: {
+        prop1: '1',
+        prop2: '2',
+      },
+    })).to.deep.equal({
+      options: {
+        prop1: '1',
+        prop2: '2',
+      },
+    });
+  });
 
   it('works curried', () => {
     expect(pick2r({
