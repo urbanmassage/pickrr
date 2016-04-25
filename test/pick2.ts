@@ -36,6 +36,34 @@ describe('pickrr#pick2', () => {
         prop2: '2',
       },
     });
+    
+    expect(pick2({
+      options: {
+        options: {
+          prop1: string,
+        },
+      },
+    }, {
+      options: {
+        options: {
+          prop2: string,
+        },
+      },
+    }, {
+      options: {
+        options: {
+          prop1: '1',
+          prop2: '2',
+        },
+      },
+    })).to.deep.equal({
+      options: {
+        options: {
+          prop1: '1',
+          prop2: '2',
+        },
+      },
+    });
   });
 
   it('works curried', () => {
