@@ -21,6 +21,29 @@ function hasProp(prop: string, obj: Object): boolean {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
+function isPlainObject(object: any): object is Object {
+  return object &&
+        typeof object === 'object' &&
+        !(object instanceof Date) &&
+        !Array.isArray(object);
+}
+
+function deepObjectAssign<T1, T2>(t1: T1, t2: T2): T1 & T2;
+function deepObjectAssign<T1, T2, T3>(t1: T1, t2: T2, t3: T3): T1 & T2 & T3;
+function deepObjectAssign(...objects: Object[]) {
+  const [target, ...rest] = objects;
+  for (const obj of rest) {
+    for (const key of Object.keys(obj)) {
+      if (isPlainObject(target[key])) {
+        target[key] = deepObjectAssign(target[key], obj[key]);
+      } else {
+        target[key] = obj[key];
+      }
+    }
+  }
+  return target;
+}
+
 function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]): T {
   const output: T = <any>{};
 
@@ -34,10 +57,7 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     const truePath = (path ? path + '.' : '') + key;
 
     // Handle nested objects
-    if (typeof type === 'object' &&
-      !Array.isArray(type) &&
-      !(type instanceof Date)
-    ) {
+    if (isPlainObject(type)) {
       output[key] = _pick(truePath, required, type, ...objects.map(obj => obj && obj[key]).filter(obj => !!obj));
       return;
     }
@@ -188,15 +208,19 @@ export function pickrRqr<T>(rules: T): (...objects: any[]) => T {
  * @see pick()
  * @see pickRqr()
  */
-export function pick2<T>(rulesRqr: T, rulesOpt: Object, ...objects: any[]): T;
-export function pick2<T1, T2>(rulesRqr: T1, rulesOpt: T2, ...objects: any[]): T1 & T2;
-export function pick2<T1, T2>(rulesRqr: T1, rulesOpt: T2, ...objects: any[]): T1 & T2 {
-  let obj = pickRqr(rulesRqr, ...objects);
+export function pick2<T>(requiredRules: T, optionalRules: Object, ...objects: any[]): T;
+export function pick2<T1, T2>(requiredRules: T1, optionalRules: T2, ...objects: any[]): T1 & T2;
+export function pick2<T1, T2 extends T1>(requiredRules: T1, optionalRules: T2, ...objects: any[]): T1;
+export function pick2<T1, T2>(requiredRules: T1, optionalRules: T2, ...objects: any[]): T1 & T2 {
+  let obj = pickRqr(requiredRules, ...objects);
 
-  return Object.keys(rulesOpt).reduce((obj, key) => {
+  return Object.keys(optionalRules).reduce((obj, key) => {
     if (!hasProp(key, obj)) {
-      let val = _pick('', false, {[key]: rulesOpt[key]}, ...objects)[key];
+      let val = _pick('', false, {[key]: optionalRules[key]}, ...objects)[key];
       if (val !== undefined) obj[key] = val;
+    } else if(isPlainObject(obj[key])) {
+      let val = _pick('', false, {[key]: optionalRules[key]}, ...objects)[key];
+      deepObjectAssign(obj[key], val);
     }
     return obj;
   }, <T1 & T2> obj);
