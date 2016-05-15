@@ -4,8 +4,8 @@
   "description": "Object picking done right.",
   "main": "index.js",
   "scripts": {
+    "typings": "typings install && typings prune",
     "build": "tsc -p .",
-    "pretest": "npm run build",
     "test": "mocha",
     "coverage": "istanbul cover _mocha",
     "postcoverage": "if [ -f coverage/lcov.info ]; then node node_modules/.bin/map-coverage && mv coverage/lcov.info coverage/lcov-raw.info && mv coverage/lcov-mapped.info coverage/lcov.info; fi",
@@ -35,7 +35,8 @@
     "source-map-support": "^0.4.0",
     "tsd": "^0.6.5",
     "tslint": "^3.1.1",
-    "typescript": "^1.7.3"
+    "typescript": "^1.8.10",
+    "typings": "^0.8.1"
   },
   "directories": {
     "test": "test"
