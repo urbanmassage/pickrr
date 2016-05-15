@@ -1,21 +1,49 @@
 import * as hata from 'hata';
 
+export interface PickrrType {
+  (value: any): any | void;
+}
+
+export function isPickrrType(fn: any): fn is PickrrType {
+  return typeof fn === 'function';
+}
+
+const StringType: PickrrType = value => value == null ? void 0 : value + '';
 /** A string */
-export const string: string = '';
+export const string: string = StringType as any;
 
+const FloatType: PickrrType = value => {
+  let vFloat = parseFloat(value);
+  if (isNaN(vFloat)) return void 0;
+  return vFloat;
+};
 /** A number (float or int) */
-export const number: number = 0;
+export const number: number = FloatType as any;
+export const float: number = FloatType as any;
 
-export const integer: number = 1;
-export const float: number = 2;
+const IntegerType: PickrrType = value => {
+  let vInt = parseInt(value, 10);
+  if (isNaN(vInt)) return void 0;
+  return vInt;
+};
+export const integer: number = IntegerType as any;
 
+const BooleanType: PickrrType = value => value == null ? void 0 : !!value;
 /** A boolean (true/false) */
-export const boolean: boolean = true;
+export const boolean: boolean = BooleanType as any;
 
-export const date: Date = new Date();
+const DateType: PickrrType = value => {
+  let vDate = typeof value === 'Date' ? value : new Date(value);
+  if (isNaN(vDate)) {
+    return void 0;
+  }
+  return vDate;
+};
+export const date: Date = DateType as any;
 
+const AnyType: PickrrType = value => value;
 /** Anything (just like in TypeScript) */
-export const any: any = 'ANY';
+export const any: any = AnyType as any;
 
 function hasProp(prop: string, obj: Object): boolean {
   return Object.prototype.hasOwnProperty.call(obj, prop);
@@ -68,7 +96,7 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     // Not found in any object.
     if (value == null) {
       if (required) {
-        throw hata(400, 'Missing attribute "' + truePath + '"', {
+        throw hata(400, `Missing attribute "${truePath}"`, {
           attribute: truePath,
         });
       }
@@ -82,7 +110,7 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     if (Array.isArray(type)) {
       /* istanbul ignore next */
       if (type.length !== 1) {
-        console.warn('pickrr#pick can only accept Arrays with one value. You passed: ', type);
+        console.warn(new Error(`pickrr#pick can only accept Arrays with one value. You passed: ${type}`).stack);
       }
 
       output[key] = value.map((val, index) => {
@@ -99,58 +127,27 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
 
     // Keep null as is.
     if (value == null) {
+      if (required) {
+        throw hata(400, `Missing value for attribute "${truePath}"`, {
+          attribute: truePath,
+        });
+      }
       return output[key] = value;
     }
 
-    switch (type) {
-      case any:
-        return output[key] = value;
-      case string:
-        return output[key] = value != null ? value + '' : null;
-      case number:
-      case float:
-        let vFloat = parseFloat(value);
-        if (isNaN(vFloat)) {
-          if (required) {
-            throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
-              attribute: truePath,
-            });
-          } else {
-            vFloat = null;
-          }
-        }
-        return output[key] = vFloat;
-      case integer:
-        let vInt = parseInt(value, 10);
-        if (isNaN(vInt)) {
-          if (required) {
-            throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
-              attribute: truePath,
-            });
-          } else {
-            vInt = null;
-          }
-        }
-        return output[key] = vInt;
-      case boolean:
-        return output[key] = !!value;
-      case date:
-        let vDate = typeof value === 'Date' ? value : new Date(value);
-        if (isNaN(vDate)) {
-          if (required) {
-            throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
-              attribute: truePath,
-            });
-          } else {
-            vDate = null;
-          }
-        }
-        return output[key] = vDate;
+    if (isPickrrType(type)) {
+      const newValue = type(value);
+      if (required && typeof newValue === 'undefined') {
+        throw hata(400, `Invalid value for attribute "${truePath}"`, {
+          attribute: truePath,
+        });
+      }
+      return output[key] = newValue;
     }
 
     // Unknown type.
     /* istanbul ignore next */
-    console.warn('An unknown type was passed to pickrr', type);
+    console.warn(new Error(`An unknown type was passed to pickrr: ${type}`).stack);
   });
 
   return output;

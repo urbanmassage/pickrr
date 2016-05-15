@@ -101,7 +101,7 @@ describe('pickrr', () => {
 
     expect(pick({
       string: number,
-    }, obj)).to.deep.equal({string: null});
+    }, obj)).to.deep.equal({string: void 0});
 
     expect(() => pickRqr({
       string: number,
@@ -109,7 +109,7 @@ describe('pickrr', () => {
 
     expect(pick({
       time: number,
-    }, obj)).to.deep.equal({time: null});
+    }, obj)).to.deep.equal({time: void 0});
 
     expect(() => pickRqr({
       time: number,
@@ -117,7 +117,7 @@ describe('pickrr', () => {
 
     expect(pick({
       trueish: number,
-    }, obj)).to.deep.equal({trueish: null});
+    }, obj)).to.deep.equal({trueish: void 0});
 
     expect(() => pickRqr({
       trueish: number,
@@ -125,7 +125,7 @@ describe('pickrr', () => {
 
     expect(pick({
       falseish: number,
-    }, obj)).to.deep.equal({falseish: null});
+    }, obj)).to.deep.equal({falseish: void 0});
 
     expect(() => pickRqr({
       falseish: number,
@@ -133,7 +133,7 @@ describe('pickrr', () => {
 
     expect(pick({
       emptyString: number,
-    }, obj)).to.deep.equal({emptyString: null});
+    }, obj)).to.deep.equal({emptyString: void 0});
 
     expect(() => pickRqr({
       emptyString: number,
@@ -141,7 +141,7 @@ describe('pickrr', () => {
 
     expect(pick({
       emptyString: integer,
-    }, obj)).to.deep.equal({emptyString: null});
+    }, obj)).to.deep.equal({emptyString: void 0});
 
     expect(() => pickRqr({
       emptyString: integer,
@@ -149,7 +149,7 @@ describe('pickrr', () => {
 
     expect(pick({
       emptyString: float,
-    }, obj)).to.deep.equal({emptyString: null});
+    }, obj)).to.deep.equal({emptyString: void 0});
 
     expect(() => pickRqr({
       emptyString: float,
@@ -185,7 +185,7 @@ describe('pickrr', () => {
 
     expect(pick({
       string: date,
-    }, obj)).to.deep.equal({string: null});
+    }, obj)).to.deep.equal({string: void 0});
 
     expect(() => pickRqr({
       string: date,
@@ -193,7 +193,7 @@ describe('pickrr', () => {
 
     expect(pick({
       emptyString: date,
-    }, obj)).to.deep.equal({emptyString: null});
+    }, obj)).to.deep.equal({emptyString: void 0});
 
     expect(() => pickRqr({
       emptyString: date,
