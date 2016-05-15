@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {pick, pickRqr, string, boolean, number, integer, float, date, any} from '../index';
+import {pick, pickRqr, string, boolean, number, integer, float, date, any, oneOf} from '../index';
 import {BadRequestError} from 'hata';
 
 describe('pickrr', () => {
@@ -101,7 +101,7 @@ describe('pickrr', () => {
 
     expect(pick({
       string: number,
-    }, obj)).to.deep.equal({string: null});
+    }, obj)).to.deep.equal({string: void 0});
 
     expect(() => pickRqr({
       string: number,
@@ -109,7 +109,7 @@ describe('pickrr', () => {
 
     expect(pick({
       time: number,
-    }, obj)).to.deep.equal({time: null});
+    }, obj)).to.deep.equal({time: void 0});
 
     expect(() => pickRqr({
       time: number,
@@ -117,7 +117,7 @@ describe('pickrr', () => {
 
     expect(pick({
       trueish: number,
-    }, obj)).to.deep.equal({trueish: null});
+    }, obj)).to.deep.equal({trueish: void 0});
 
     expect(() => pickRqr({
       trueish: number,
@@ -125,7 +125,7 @@ describe('pickrr', () => {
 
     expect(pick({
       falseish: number,
-    }, obj)).to.deep.equal({falseish: null});
+    }, obj)).to.deep.equal({falseish: void 0});
 
     expect(() => pickRqr({
       falseish: number,
@@ -133,7 +133,7 @@ describe('pickrr', () => {
 
     expect(pick({
       emptyString: number,
-    }, obj)).to.deep.equal({emptyString: null});
+    }, obj)).to.deep.equal({emptyString: void 0});
 
     expect(() => pickRqr({
       emptyString: number,
@@ -141,7 +141,7 @@ describe('pickrr', () => {
 
     expect(pick({
       emptyString: integer,
-    }, obj)).to.deep.equal({emptyString: null});
+    }, obj)).to.deep.equal({emptyString: void 0});
 
     expect(() => pickRqr({
       emptyString: integer,
@@ -149,7 +149,7 @@ describe('pickrr', () => {
 
     expect(pick({
       emptyString: float,
-    }, obj)).to.deep.equal({emptyString: null});
+    }, obj)).to.deep.equal({emptyString: void 0});
 
     expect(() => pickRqr({
       emptyString: float,
@@ -185,7 +185,7 @@ describe('pickrr', () => {
 
     expect(pick({
       string: date,
-    }, obj)).to.deep.equal({string: null});
+    }, obj)).to.deep.equal({string: void 0});
 
     expect(() => pickRqr({
       string: date,
@@ -193,7 +193,7 @@ describe('pickrr', () => {
 
     expect(pick({
       emptyString: date,
-    }, obj)).to.deep.equal({emptyString: null});
+    }, obj)).to.deep.equal({emptyString: void 0});
 
     expect(() => pickRqr({
       emptyString: date,
@@ -261,5 +261,119 @@ describe('pickrr', () => {
       array: any,
       boolean: any,
     }, obj)).to.deep.equal(obj); // no change
+  });
+
+  it('respects oneOf type', () => {
+    expect(pick({
+      number: oneOf(number, string),
+      string: oneOf(number, string),
+    }, {
+      number: 1,
+      string: '1',
+    })).to.deep.equal({
+      number: 1,
+      string: 1,
+    });
+
+    expect(pick({
+      number: oneOf(string, number),
+      string: oneOf(string, number),
+    }, {
+      number: 1,
+      string: '1',
+    })).to.deep.equal({
+      number: '1',
+      string: '1',
+    });
+
+    expect(pick({
+      string: oneOf(date, string),
+    }, {
+      string: 'test',
+    })).to.deep.equal({
+      string: 'test',
+    });
+  });
+
+  it('supports string literals', () => {
+    expect(pick({
+      test: oneOf('a', 'b'),
+    }, {
+      test: 'a',
+    })).to.deep.equal({
+      test: 'a',
+    });
+
+    expect(pick({
+      test: oneOf('a', 'b'),
+    }, {
+      test: 'b',
+    })).to.deep.equal({
+      test: 'b',
+    });
+
+    expect(pick({
+      test: oneOf('a', 'b'),
+    }, {
+      test: 'c',
+    })).to.deep.equal({
+      test: void 0,
+    });
+
+    expect(pick({
+      test: 'a',
+    }, {
+      test: 'a',
+    })).to.deep.equal({
+      test: 'a',
+    });
+    expect(pick({
+      test: 'a',
+    }, {
+      test: 'c',
+    })).to.deep.equal({
+      test: void 0,
+    });
+  });
+
+  it('supports numeric values', () => {
+    expect(pick({
+      test: oneOf(1, 2),
+    }, {
+      test: 1,
+    })).to.deep.equal({
+      test: 1,
+    });
+
+    expect(pick({
+      test: oneOf(1, 2),
+    }, {
+      test: 2,
+    })).to.deep.equal({
+      test: 2,
+    });
+
+    expect(pick({
+      test: oneOf(1, 2),
+    }, {
+      test: 3,
+    })).to.deep.equal({
+      test: void 0,
+    });
+
+    expect(pick({
+      test: 1,
+    }, {
+      test: 1,
+    })).to.deep.equal({
+      test: 1,
+    });
+    expect(pick({
+      test: 1,
+    }, {
+      test: 3,
+    })).to.deep.equal({
+      test: void 0,
+    });
   });
 });
