@@ -1,20 +1,33 @@
 import * as hata from 'hata';
 
-export interface PickrrType {
-  (value: any): any | void;
+export interface PickrrType<T> {
+  (value: any): T | void;
 }
 
-export function isPickrrType(fn: any): fn is PickrrType {
+export function isPickrrType<T>(fn: any): fn is PickrrType<any> {
   return typeof fn === 'function';
+}
+
+export function convertToTypePicker<T>(pickrrType: PickrrType<T> | T): PickrrType<T> {
+  if (isPickrrType(pickrrType)) return pickrrType;
+  if (
+    // string literals support
+    typeof pickrrType === 'string' ||
+    // numeric values support
+    typeof pickrrType === 'number'
+  ) {
+    return value => value === pickrrType ? value : void 0;
+  }
+  throw new Error(`Unknown type passed to pickrr#convertToTypePicker: <${typeof pickrrType}> ${pickrrType}`);
 }
 
 /** A string */
 export const string: string = (
   value =>
     value == null ? void 0 : `${value}`
-) as PickrrType as any;
+) as PickrrType<string> as any;
 
-const FloatType: PickrrType = value => {
+const FloatType: PickrrType<number> = value => {
   let vFloat = parseFloat(value);
   if (isNaN(vFloat)) return void 0;
   return vFloat;
@@ -29,13 +42,13 @@ export const integer: number = (
     if (isNaN(vInt)) return void 0;
     return vInt;
   }
-) as PickrrType as any;
+) as PickrrType<number> as any;
 
 /** A boolean (true/false) */
 export const boolean: boolean = (
   value =>
     value == null ? void 0 : !!value
-) as PickrrType as any;
+) as PickrrType<boolean> as any;
 
 export const date: Date = (
   value => {
@@ -45,13 +58,13 @@ export const date: Date = (
     }
     return vDate;
   }
-) as PickrrType as any;
+) as PickrrType<Date> as any;
 
 /** Anything (just like in TypeScript) */
 export const any: any = (
   value =>
     value
-) as PickrrType as any;
+) as PickrrType<any> as any;
 
 export function oneOf<T1>(type1: T1): T1;
 export function oneOf<T1, T2>(type1: T1, type2: T2): T1 | T2;
@@ -62,8 +75,8 @@ export function oneOf<T>(...types: T[]): T;
 export function oneOf<T>(...types: T[]): T {
   return (
     value =>
-      (types as any as PickrrType[]).reduce((val, type) => val == null ? type(value) as T : val, void 0)
-  ) as PickrrType as any;
+      types.reduce((val, type) => val == null ? convertToTypePicker(type)(value) as T : val, void 0)
+  ) as PickrrType<T> as any;
 }
 
 function hasProp(prop: string, obj: Object): boolean {
@@ -156,19 +169,14 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
       return output[key] = value;
     }
 
-    if (isPickrrType(type)) {
-      const newValue = type(value);
-      if (required && typeof newValue === 'undefined') {
-        throw hata(400, `Invalid value for attribute "${truePath}"`, {
-          attribute: truePath,
-        });
-      }
-      return output[key] = newValue;
+    const pickrrType = convertToTypePicker(type);
+    const newValue = type(value);
+    if (required && typeof newValue === 'undefined') {
+      throw hata(400, `Invalid value for attribute "${truePath}"`, {
+        attribute: truePath,
+      });
     }
-
-    // Unknown type.
-    /* istanbul ignore next */
-    console.warn(new Error(`An unknown type was passed to pickrr: ${type}`).stack);
+    return output[key] = newValue;
   });
 
   return output;
