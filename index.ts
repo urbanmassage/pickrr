@@ -8,9 +8,11 @@ export function isPickrrType(fn: any): fn is PickrrType {
   return typeof fn === 'function';
 }
 
-const StringType: PickrrType = value => value == null ? void 0 : value + '';
 /** A string */
-export const string: string = StringType as any;
+export const string: string = (
+  value =>
+    value == null ? void 0 : `${value}`
+) as PickrrType as any;
 
 const FloatType: PickrrType = value => {
   let vFloat = parseFloat(value);
@@ -21,29 +23,48 @@ const FloatType: PickrrType = value => {
 export const number: number = FloatType as any;
 export const float: number = FloatType as any;
 
-const IntegerType: PickrrType = value => {
-  let vInt = parseInt(value, 10);
-  if (isNaN(vInt)) return void 0;
-  return vInt;
-};
-export const integer: number = IntegerType as any;
-
-const BooleanType: PickrrType = value => value == null ? void 0 : !!value;
-/** A boolean (true/false) */
-export const boolean: boolean = BooleanType as any;
-
-const DateType: PickrrType = value => {
-  let vDate = typeof value === 'Date' ? value : new Date(value);
-  if (isNaN(vDate)) {
-    return void 0;
+export const integer: number = (
+  value => {
+    let vInt = parseInt(value, 10);
+    if (isNaN(vInt)) return void 0;
+    return vInt;
   }
-  return vDate;
-};
-export const date: Date = DateType as any;
+) as PickrrType as any;
 
-const AnyType: PickrrType = value => value;
+/** A boolean (true/false) */
+export const boolean: boolean = (
+  value =>
+    value == null ? void 0 : !!value
+) as PickrrType as any;
+
+export const date: Date = (
+  value => {
+    let vDate = typeof value === 'Date' ? value : new Date(value);
+    if (isNaN(vDate)) {
+      return void 0;
+    }
+    return vDate;
+  }
+) as PickrrType as any;
+
 /** Anything (just like in TypeScript) */
-export const any: any = AnyType as any;
+export const any: any = (
+  value =>
+    value
+) as PickrrType as any;
+
+export function oneOf<T1>(type1: T1): T1;
+export function oneOf<T1, T2>(type1: T1, type2: T2): T1 | T2;
+export function oneOf<T1, T2, T3>(type1: T1, type2: T2, type3: T3): T1 | T2 | T3;
+export function oneOf<T1, T2, T3, T4>(type1: T1, type2: T2, type3: T3, type4: T4): T1 | T2 | T3 | T4;
+export function oneOf<T1, T2, T3, T4, T5>(type1: T1, type2: T2, type3: T3, type4: T4, type5: T5): T1 | T2 | T3 | T4 | T5;
+export function oneOf<T>(...types: T[]): T;
+export function oneOf<T>(...types: T[]): T {
+  return (
+    value =>
+      (types as any as PickrrType[]).reduce((val, type) => val == null ? type(value) as T : val, void 0)
+  ) as PickrrType as any;
+}
 
 function hasProp(prop: string, obj: Object): boolean {
   return Object.prototype.hasOwnProperty.call(obj, prop);

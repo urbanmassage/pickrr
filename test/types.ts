@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {pick, pickRqr, string, boolean, number, integer, float, date, any} from '../index';
+import {pick, pickRqr, string, boolean, number, integer, float, date, any, oneOf} from '../index';
 import {BadRequestError} from 'hata';
 
 describe('pickrr', () => {
@@ -261,5 +261,37 @@ describe('pickrr', () => {
       array: any,
       boolean: any,
     }, obj)).to.deep.equal(obj); // no change
+  });
+
+  it('respects oneOf type', () => {
+    expect(pick({
+      number: oneOf(number, string),
+      string: oneOf(number, string),
+    }, {
+      number: 1,
+      string: '1',
+    })).to.deep.equal({
+      number: 1,
+      string: 1,
+    });
+
+    expect(pick({
+      number: oneOf(string, number),
+      string: oneOf(string, number),
+    }, {
+      number: 1,
+      string: '1',
+    })).to.deep.equal({
+      number: '1',
+      string: '1',
+    });
+
+    expect(pick({
+      string: oneOf(date, string),
+    }, {
+      string: 'test',
+    })).to.deep.equal({
+      string: 'test',
+    });
   });
 });
