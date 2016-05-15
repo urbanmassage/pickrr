@@ -170,7 +170,7 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     }
 
     const pickrrType = convertToTypePicker(type);
-    const newValue = type(value);
+    const newValue = pickrrType(value);
     if (required && typeof newValue === 'undefined') {
       throw hata(400, `Invalid value for attribute "${truePath}"`, {
         attribute: truePath,

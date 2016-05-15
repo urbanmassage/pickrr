@@ -294,4 +294,86 @@ describe('pickrr', () => {
       string: 'test',
     });
   });
+
+  it('supports string literals', () => {
+    expect(pick({
+      test: oneOf('a', 'b'),
+    }, {
+      test: 'a',
+    })).to.deep.equal({
+      test: 'a',
+    });
+
+    expect(pick({
+      test: oneOf('a', 'b'),
+    }, {
+      test: 'b',
+    })).to.deep.equal({
+      test: 'b',
+    });
+
+    expect(pick({
+      test: oneOf('a', 'b'),
+    }, {
+      test: 'c',
+    })).to.deep.equal({
+      test: void 0,
+    });
+
+    expect(pick({
+      test: 'a',
+    }, {
+      test: 'a',
+    })).to.deep.equal({
+      test: 'a',
+    });
+    expect(pick({
+      test: 'a',
+    }, {
+      test: 'c',
+    })).to.deep.equal({
+      test: void 0,
+    });
+  });
+
+  it('supports numeric values', () => {
+    expect(pick({
+      test: oneOf(1, 2),
+    }, {
+      test: 1,
+    })).to.deep.equal({
+      test: 1,
+    });
+
+    expect(pick({
+      test: oneOf(1, 2),
+    }, {
+      test: 2,
+    })).to.deep.equal({
+      test: 2,
+    });
+
+    expect(pick({
+      test: oneOf(1, 2),
+    }, {
+      test: 3,
+    })).to.deep.equal({
+      test: void 0,
+    });
+
+    expect(pick({
+      test: 1,
+    }, {
+      test: 1,
+    })).to.deep.equal({
+      test: 1,
+    });
+    expect(pick({
+      test: 1,
+    }, {
+      test: 3,
+    })).to.deep.equal({
+      test: void 0,
+    });
+  });
 });
