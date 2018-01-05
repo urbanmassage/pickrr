@@ -135,8 +135,8 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
       case boolean:
         return output[key] = !!value;
       case date:
-        let vDate = typeof value === 'Date' ? value : new Date(value);
-        if (isNaN(vDate)) {
+        let vDate = new Date(value);
+        if (isNaN(vDate.valueOf())) {
           if (required) {
             throw hata(400, 'Invalid value for attribute "' + truePath + '"', {
               attribute: truePath,
