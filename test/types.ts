@@ -243,6 +243,26 @@ describe('pickrr', () => {
     });
   });
 
+  it('returns null for a null nested object', () => {
+    const obj = {
+      params: null,
+    };
+
+    expect(pick({
+      params: {id: integer},
+    }, obj)).to.deep.equal({
+      params: null,
+    });
+  });
+
+  it('returns undefined for a undefined nested object', () => {
+    const obj = {
+      params: null,
+    };
+
+    expect(pick({}, obj)).to.deep.equal({});
+  });
+
   it('respects any type', () => {
     const obj = {
       object: {

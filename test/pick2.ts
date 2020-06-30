@@ -15,7 +15,7 @@ describe('pickrr#pick2', () => {
       opt: 1,
     });
   });
-  
+
   it('works with nested objects', () => {
     expect(pick2({
       options: {
@@ -36,7 +36,7 @@ describe('pickrr#pick2', () => {
         prop2: '2',
       },
     });
-    
+
     expect(pick2({
       options: {
         options: {
@@ -92,9 +92,21 @@ describe('pickrr#pick2', () => {
     });
   });
 
-  it('throws for required', () => {
+  it('throws for required props', () => {
     expect(() => pick2({
       req: string,
+    }, {
+      opt: number,
+    }, {
+      opt: number,
+    })).to.throw;
+  });
+
+  it('throws for required nested objects', () => {
+    expect(() => pick2({
+      req: {
+        id: string,
+      },
     }, {
       opt: number,
     }, {

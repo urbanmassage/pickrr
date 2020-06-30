@@ -53,17 +53,17 @@ function _pick<T>(path: string, required: boolean, rules: T, ...objects: any[]):
     const type = rules[key];
     const truePath = (path ? path + '.' : '') + key;
 
-    // Handle nested objects
-    if (isPlainObject(type)) {
-      output[key] = _pick(truePath, required, type, ...objects.map(obj => obj && obj[key]).filter(obj => !!obj));
-      return;
-    }
-
     const value: typeof type = objects.reduce((value, object) => {
       if (value != null) return value;
       // keep previous null value if exists
       return object[key] === undefined ? value : object[key];
     }, undefined);
+
+    // Handle nested objects
+    if (isPlainObject(type) && value) {
+      output[key] = _pick(truePath, required, type, ...objects.map(obj => obj && obj[key]).filter(obj => !!obj));
+      return;
+    }
 
     // Not found in any object.
     if (value == null) {
