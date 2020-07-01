@@ -1,6 +1,6 @@
 {
   "name": "pickrr",
-  "version": "0.5.2",
+  "version": "1.0.0",
   "description": "Object picking done right.",
   "main": "index.js",
   "scripts": {
