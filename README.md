@@ -17,6 +17,8 @@ npm i --save pickrr
 
 ## Usage
 
+### General usage
+
 ```ts
 import {pick, number, string} from 'pickrr'
 
@@ -42,6 +44,59 @@ const data = pick({
 }, req.params, req.body);
 
 // data now has the same signature as the contract itself.
+```
+
+### Optional vs required rules
+
+If none of your params are required use the `pick` function.
+
+```ts
+const data = pick(
+  {
+    // optional rules
+    id: number,
+    name: string,
+  }, 
+  inputObject1, 
+  inputObject2,
+  // ... as many other objects to take properties from
+);
+```
+
+
+If all of your params are required use the `pickRqr` function.
+
+```ts
+const data = pickRqr(
+  {
+    // required rules
+    id: number,
+    name: string,
+  }, 
+  inputObject1, 
+  inputObject2,
+  // ... as many other objects to take properties from
+);
+```
+
+
+If some of your params are required use the `pick2` function which lets you specify some required + some optional rules.
+
+```ts
+const data = pick2(
+  {
+    // required rules
+    id: number,
+    name: string,
+  }, 
+  {
+    // optional rules
+    foo: number,
+  }, 
+  inputObject1, 
+  inputObject2,
+  // ... as many other objects to take properties from
+);
 ```
 
 **The trick?**
